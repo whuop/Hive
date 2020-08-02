@@ -1,0 +1,6 @@
+syntax = "proto3";
+package NetMessage;
+
+message ClientID {
+    uint32 id = 1;
+}

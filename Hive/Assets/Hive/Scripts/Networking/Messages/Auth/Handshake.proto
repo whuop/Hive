@@ -1,0 +1,14 @@
+syntax = "proto3";
+package NetMessage;
+
+import "GameData/Networking/Messages/ClientID.proto";
+
+message HandshakeRequest 
+{
+    string message = 1;
+}
+
+message HandshakeResponse
+{
+    NetMessage.ClientID assignedId = 1;
+}

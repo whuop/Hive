@@ -1,0 +1,14 @@
+syntax = "proto3";
+package DataPacks;
+
+import "GameData/DataPacks/Transform/Position.proto";
+import "GameData/DataPacks/Transform/Rotation.proto";
+import "GameData/DataPacks/PrefabID.proto";
+
+message Entity {
+    int32 id = 1;
+    string name = 2;
+    DataPacks.PrefabID prefabId = 3;
+    DataPacks.Transform.Position position = 4;
+    DataPacks.Transform.Rotation rotation = 5;
+}

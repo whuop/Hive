@@ -1,0 +1,10 @@
+﻿syntax = "proto3";
+package DataPacks;
+
+message PlayerProfile {
+  int32 id = 1;
+  string name = 2;
+  string alias = 3;
+  string email = 4;
+  string password = 5;
+}
