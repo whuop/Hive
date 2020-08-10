@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using Hive.TransportLayer.Pipelines;
+using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Pipelines;
 using Leopotam.Ecs;
 using NetMessage;
 using UnityEngine;
 
-namespace Hive.TransportLayer
+namespace Hive.TransportLayer.Server
 {
     public class NetworkServerBehaviour : MonoBehaviour
     {
@@ -55,14 +56,14 @@ namespace Hive.TransportLayer
         [SerializeField]
         private NetworkServer m_server;
 
-        private Pipeline<HandshakeRequest> m_handshakes;
+        private InputPipeline<HandshakeRequest> m_handshakes;
         
         private List<EndPoint> m_acceptedConnections = new List<EndPoint>();
         private Dictionary<Socket, PipelineManager> m_pipelineManagers;
         
         public void Init()
         {
-            m_handshakes = m_server.PipelineManager.GetPipeline<HandshakeRequest>();
+            m_handshakes = m_server.PipelineManager.GetInputPipeline<HandshakeRequest>();
         }
 
         public void Destroy()

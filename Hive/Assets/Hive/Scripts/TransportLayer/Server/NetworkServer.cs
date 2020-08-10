@@ -4,11 +4,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Google.Protobuf;
-using Hive.TransportLayer.Pipelines;
+using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Components;
+using Hive.TransportLayer.Shared.Pipelines;
 using Leopotam.Ecs;
 using UnityEngine;
 
-namespace Hive.TransportLayer
+namespace Hive.TransportLayer.Server
 {
     public class NetworkServer
     {
@@ -48,7 +50,6 @@ namespace Hive.TransportLayer
             m_updateSystems.Add(new AcceptConnectionsSystem());
             m_updateSystems.Add(new MultiReceiveReliableMessageSystem());
             m_updateSystems.Add(new MultiSendPipelineMessages());
-            //m_updateSystems.Add(new SendPipelineMessages());
             m_updateSystems.Inject(m_world);
             m_updateSystems.Inject(m_tcpSocket);
             m_updateSystems.Inject(m_state);
@@ -94,36 +95,6 @@ namespace Hive.TransportLayer
         {
             m_lateUpdatesystems.Run();
         }
-        
-        /*public void Send(Socket destination, IMessage message, SendProtocol sendProtocol)
-        {
-            Send(destination,m_lookupTable.Serialize(message), sendProtocol);
-        }*/
-
-        /*public void Send(Socket destination, byte[] data, SendProtocol sendProtocol)
-        {
-            destination.BeginSendTo(data, 0, data.Length, SocketFlags.None, destination.RemoteEndPoint, (ar) =>
-            {
-                Socket so = (Socket)ar.AsyncState;
-                int bytes = so.EndSendTo(ar);
-            }, destination);
-        }*/
-    }
-
-    public enum SendProtocol : int
-    {
-        Unreliable = 0,
-        Reliable = 1
-    }
-
-    public class TCPSocket
-    {
-        public Socket Socket;
-    }
-
-    public class UDPSocket
-    {
-        public Socket Socket;
     }
 
     public class AcceptConnectionsSystem : IEcsInitSystem, IEcsRunSystem, IEcsDestroySystem
@@ -225,7 +196,7 @@ namespace Hive.TransportLayer
 
                         for (int j = 0; j < numMessages; j++)
                         {
-                            IPipeline pipeline = m_pipelineManager.GetPipeline(messageIndex);
+                            IInputPipeline pipeline = m_pipelineManager.GetInputPipeline(messageIndex);
                             pipeline.PushMessage(stream, state.WorkSocket);
                         }
                         
@@ -340,37 +311,5 @@ namespace Hive.TransportLayer
         }
     }
 
-    public struct HiveConnection
-    {
-        public Socket Socket;
-    }
-
-    public class SystemInformation
-    {
-        private SystemType m_systemType;
-        
-        public SystemInformation(SystemType systemType)
-        {
-            m_systemType = systemType;
-        }
-
-        public string GetTag()
-        {
-            return $"[{m_systemType.ToString()}] ";
-        }
-    }
-
-    public enum SystemType : int
-    {
-        Server = 0,
-        Client = 1
-    }
     
-    public class StateObject
-    {
-        public const int BufferSize = 8 * 1024;
-        public byte[] Buffer = new byte[BufferSize];
-        public ArraySegment<byte> Segment;
-        public Socket WorkSocket = null;
-    }
 }

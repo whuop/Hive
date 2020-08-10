@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using System.Runtime.Remoting.Contexts;
-using Hive.TransportLayer.Pipelines;
-using Leopotam.Ecs;
-using NetMessage;
+﻿using System.Net;
+using Hive.TransportLayer.Shared;
 using UnityEngine;
 
-namespace Hive.TransportLayer
+namespace Hive.TransportLayer.Client
 {
     public class NetworkClientBehaviour : MonoBehaviour
     {
@@ -54,14 +48,6 @@ namespace Hive.TransportLayer
                 return;
             
             m_client.Update();
-            /*if (Input.GetKeyUp(KeyCode.Space))
-            {
-                m_client.Send(new HandshakeRequest
-                {
-                    Username = "whuop",
-                    Password = "bajs"
-                });
-            }*/
         }
 
         private void FixedUpdate()

@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace Hive.TransportLayer
+namespace Hive.TransportLayer.Shared
 {
     [CreateAssetMenu(fileName = "MessageLookupTable", menuName = "Hive/MessageLookupTable", order = 1)]
     public class MessageLookupTable : ScriptableObject

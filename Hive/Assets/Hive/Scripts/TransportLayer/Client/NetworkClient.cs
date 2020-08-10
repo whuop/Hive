@@ -4,12 +4,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Google.Protobuf;
-using Hive.TransportLayer.Pipelines;
+using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Components;
+using Hive.TransportLayer.Shared.Pipelines;
 using Leopotam.Ecs;
 using NetMessage;
 using UnityEngine;
 
-namespace Hive.TransportLayer
+namespace Hive.TransportLayer.Client
 {
     
     public class NetworkClient
@@ -206,12 +208,12 @@ namespace Hive.TransportLayer
         private IPipelineManager m_pipelines;
 
         private OutputPipeline<HandshakeRequest> m_handshakeRequests;
-        private Pipeline<HandshakeResponse> m_handshakeResponses;
+        private InputPipeline<HandshakeResponse> m_handshakeResponses;
         
         public void Init()
         {
             m_handshakeRequests = m_pipelines.GetOutputPipeline<HandshakeRequest>();
-            m_handshakeResponses = m_pipelines.GetPipeline<HandshakeResponse>();
+            m_handshakeResponses = m_pipelines.GetInputPipeline<HandshakeResponse>();
             
             m_handshakeRequests.PushMessage(new HandshakeRequest()
             {
@@ -287,7 +289,7 @@ namespace Hive.TransportLayer
 
                 for (int j = 0; j < numMessages; j++)
                 {
-                    IPipeline pipeline = m_pipelineManager.GetPipeline(messageIndex);
+                    IInputPipeline pipeline = m_pipelineManager.GetInputPipeline(messageIndex);
                     pipeline.PushMessage(stream, m_state.WorkSocket);
                 }
                 
@@ -306,7 +308,7 @@ namespace Hive.TransportLayer
         private TCPSocket m_tcpSocket;
         private IPipelineManager m_pipelineManager;
 
-        private IReadOnlyList<IPipeline> m_inputPipelines;
+        private IReadOnlyList<IInputPipeline> m_inputPipelines;
         private IReadOnlyList<IOutputPipeline> m_outputPipelines;
 
         private CodedOutputStream m_outputStream;

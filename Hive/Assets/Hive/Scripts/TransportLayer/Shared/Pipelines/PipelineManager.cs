@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Google.Protobuf;
-using UnityEditor.VersionControl;
+using Hive.TransportLayer.Shared;
 
-namespace Hive.TransportLayer.Pipelines
+namespace Hive.TransportLayer.Shared.Pipelines
 {
     public class PipelineManager : IPipelineManager
     {
         //    Input Pipelines
-        private Dictionary<Type, IPipeline> m_pipelinesTypeMap;
-        private Dictionary<int, IPipeline> m_pipelinesIntMap;
-        private List<IPipeline> m_inputPipelines;
+        private Dictionary<Type, IInputPipeline> m_pipelinesTypeMap;
+        private Dictionary<int, IInputPipeline> m_pipelinesIntMap;
+        private List<IInputPipeline> m_inputPipelines;
 
         //    Output Pipelines
         private Dictionary<Type, IOutputPipeline> m_outputPipelinesTypeMap;
@@ -42,9 +42,9 @@ namespace Hive.TransportLayer.Pipelines
 
         private void InitializePipelines()
         {
-            m_pipelinesTypeMap = new Dictionary<Type,IPipeline>();
-            m_pipelinesIntMap = new Dictionary<int, IPipeline>();
-            m_inputPipelines = new List<IPipeline>();
+            m_pipelinesTypeMap = new Dictionary<Type,IInputPipeline>();
+            m_pipelinesIntMap = new Dictionary<int, IInputPipeline>();
+            m_inputPipelines = new List<IInputPipeline>();
             
             m_outputPipelinesTypeMap = new Dictionary<Type, IOutputPipeline>();
             m_outputPipelinesIntMap = new Dictionary<int, IOutputPipeline>();
@@ -58,8 +58,8 @@ namespace Hive.TransportLayer.Pipelines
             int i = 0;
             foreach (var kvp in m_lookupTable.TypeDescriptors)
             {
-                var pipelineType = typeof(Pipeline<>).MakeGenericType(kvp.Key);
-                var pipeline = (IPipeline)Activator.CreateInstance(pipelineType);
+                var pipelineType = typeof(InputPipeline<>).MakeGenericType(kvp.Key);
+                var pipeline = (IInputPipeline)Activator.CreateInstance(pipelineType);
 
                 var outputPipelineType = typeof(OutputPipeline<>).MakeGenericType(kvp.Key);
                 var outputPipeline = (IOutputPipeline) Activator.CreateInstance(outputPipelineType);
@@ -78,22 +78,22 @@ namespace Hive.TransportLayer.Pipelines
             }
         }
         
-        public Pipeline<T> GetPipeline<T>() where T : IMessage
+        public InputPipeline<T> GetInputPipeline<T>() where T : IMessage
         {
             Type type = typeof(T);
             if (!m_pipelinesTypeMap.ContainsKey(type))
                 return null;
-            return (Pipeline<T>) m_pipelinesTypeMap[type];
+            return (InputPipeline<T>) m_pipelinesTypeMap[type];
         }
 
-        public IPipeline GetPipeline(int typeIndex)
+        public IInputPipeline GetInputPipeline(int typeIndex)
         {
             if (!m_pipelinesIntMap.ContainsKey(typeIndex))
                 return null;
             return m_pipelinesIntMap[typeIndex];
         }
 
-        public IReadOnlyList<IPipeline> GetInputPipelines()
+        public IReadOnlyList<IInputPipeline> GetInputPipelines()
         {
             return m_inputPipelines;
         }
