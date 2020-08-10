@@ -1,0 +1,19 @@
+syntax = "proto3";
+package NetMessage;
+
+message HandshakeRequest 
+{
+    string username = 1;
+    string password = 2;
+}
+
+message HandshakeResponse
+{
+    ConnectionState state = 1;
+}
+
+enum ConnectionState
+{
+    DISCONNECTED = 0;
+    CONNECTED = 1;
+}

@@ -27,27 +27,14 @@ namespace Vault
         
         public QueryBuilder Query { get; private set; }
 
-        
-        
-        
         public override void Initialize()
         {
             base.Initialize();
-
-            /*foreach (var service in AuthServiceReflection.Descriptor.Services)
-            {
-                foreach (var method in service.Methods)
-                {
-                    Debug.LogError($"Service {service.Name}::{method.Name}");
-                    Debug.LogError($"Input {method.InputType.Name} Output {method.OutputType.Name}");
-                }
-            }*/
             
             this.Query = new QueryBuilder(this);
             Connect(m_databaseName);
             
             InjectDummyData();
-            Debug.Log("Connected to MongoDB database");
         }
 
         private void InjectDummyData()

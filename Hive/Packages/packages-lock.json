@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.leopotam.ecs": {
+      "version": "https://github.com/Leopotam/ecs.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0e69d61cf659e5635b46b3f8d4531e619a85c497"
+    },
     "com.unity.burst": {
       "version": "1.3.3",
       "depth": 0,

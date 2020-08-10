@@ -58,8 +58,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Ext\URP\TutorialInfo\Scripts\Editor\ReadmeEditor.cs" />
      <Compile Include="Assets\Hive\Libraries\Protobuf\Scripts\Editor\ProtoImporter.cs" />
-     <Compile Include="Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs" />
  <Reference Include="UnityEditor.TestRunner">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
  </Reference>
@@ -72,54 +72,6 @@
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
- <Reference Include="Unity.RenderPipelines.Universal.Shaders">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
- </Reference>
- <Reference Include="Unity.VSCode.Editor">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.RenderPipelines.Core.Editor">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.RenderPipelines.Core.Runtime">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
- </Reference>
- <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.RenderPipelines.Universal.Runtime">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
- </Reference>
- <Reference Include="Unity.RenderPipelines.Universal.Editor">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine.UI">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Timeline">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
- </Reference>
- <Reference Include="Unity.CollabProxy.Editor">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Rider.Editor">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
- </Reference>
- <Reference Include="Unity.ShaderGraph.Editor">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
- </Reference>
- <Reference Include="Unity.TextMeshPro">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
- </Reference>
- <Reference Include="UnityEditor.UI">
- <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
- </Reference>
  <Reference Include="Cinemachine">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
  </Reference>
@@ -129,8 +81,14 @@
  <Reference Include="Unity.ScriptableBuildPipeline.Editor">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.Editor.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.RenderPipelines.Universal.Shaders">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Burst">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Burst.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.VSCode.Editor">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Jobs">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Jobs.dll</HintPath>
@@ -141,8 +99,14 @@
  <Reference Include="Unity.Entities.Editor">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Entities.Editor.dll</HintPath>
  </Reference>
+ <Reference Include="Leopotam.Ecs">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Leopotam.Ecs.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Burst.Editor">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Burst.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.RenderPipelines.Core.Editor">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Collections">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Collections.dll</HintPath>
@@ -156,14 +120,29 @@
  <Reference Include="Unity.Properties">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Properties.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.RenderPipelines.Core.Runtime">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Scenes.Hybrid">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Scenes.Hybrid.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Scenes.Editor">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Scenes.Editor.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.TextMeshPro.Editor">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Mathematics.Extensions">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Mathematics.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.RenderPipelines.Universal.Editor">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.UI">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Searcher.Editor">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Searcher.Editor.dll</HintPath>
@@ -171,11 +150,23 @@
  <Reference Include="Unity.Mathematics.Extensions.Hybrid">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Mathematics.Extensions.Hybrid.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.Timeline">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.CollabProxy.Editor">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Entities.BuildUtils">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Entities.BuildUtils.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Serialization">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Serialization.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Rider.Editor">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Entities.Hybrid.EndToEnd.Tests">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Entities.Hybrid.EndToEnd.Tests.dll</HintPath>
@@ -207,11 +198,23 @@
  <Reference Include="Unity.ScriptableBuildPipeline">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.ShaderGraph.Editor">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Mathematics.Editor">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.TextMeshPro">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Networking.Transport">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Networking.Transport.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.UI">
+ <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Transforms.Hybrid">
  <HintPath>E:/Repos/Hive/Hive/Library/ScriptAssemblies/Unity.Transforms.Hybrid.dll</HintPath>
@@ -402,8 +405,32 @@
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>E:/UnityEditors/2019.4.2f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
- <Reference Include="ICSharpCode.NRefactory">
- <HintPath>E:/Repos/Hive/Hive/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
+ <Reference Include="Google.Protobuf">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Protobuf/Plugins/Google.Protobuf.dll</HintPath>
+ </Reference>
+ <Reference Include="System.Memory">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Protobuf/Plugins/System.Memory.dll</HintPath>
+ </Reference>
+ <Reference Include="DnsClient">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/DnsClient.dll</HintPath>
+ </Reference>
+ <Reference Include="MongoDB.Bson">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Bson.dll</HintPath>
+ </Reference>
+ <Reference Include="MongoDB.Driver.Core">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Driver.Core.dll</HintPath>
+ </Reference>
+ <Reference Include="MongoDB.Driver">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Driver.dll</HintPath>
+ </Reference>
+ <Reference Include="MongoDB.Libmongocrypt">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Libmongocrypt.dll</HintPath>
+ </Reference>
+ <Reference Include="SharpCompress">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/SharpCompress.dll</HintPath>
+ </Reference>
+ <Reference Include="System.Buffers">
+ <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/System.Buffers.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Burst.Unsafe">
  <HintPath>E:/Repos/Hive/Hive/Library/PackageCache/com.unity.burst@1.3.3/Unity.Burst.Unsafe.dll</HintPath>
@@ -411,35 +438,11 @@
  <Reference Include="System.Runtime.CompilerServices.Unsafe">
  <HintPath>E:/Repos/Hive/Hive/Library/PackageCache/com.unity.collections@0.9.0-preview.6/System.Runtime.CompilerServices.Unsafe.dll</HintPath>
  </Reference>
- <Reference Include="Google.Protobuf">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Protobuf/Plugins/Google.Protobuf.dll</HintPath>
- </Reference>
- <Reference Include="System.Buffers">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/System.Buffers.dll</HintPath>
- </Reference>
- <Reference Include="System.Memory">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Protobuf/Plugins/System.Memory.dll</HintPath>
- </Reference>
- <Reference Include="MongoDB.Driver">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Driver.dll</HintPath>
- </Reference>
- <Reference Include="DnsClient">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/DnsClient.dll</HintPath>
- </Reference>
- <Reference Include="SharpCompress">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/SharpCompress.dll</HintPath>
- </Reference>
- <Reference Include="MongoDB.Bson">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Bson.dll</HintPath>
- </Reference>
  <Reference Include="Newtonsoft.Json">
  <HintPath>E:/Repos/Hive/Hive/Library/PackageCache/com.unity.nuget.newtonsoft-json@2.0.0-preview/Runtime/Newtonsoft.Json.dll</HintPath>
  </Reference>
- <Reference Include="MongoDB.Libmongocrypt">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Libmongocrypt.dll</HintPath>
- </Reference>
- <Reference Include="MongoDB.Driver.Core">
- <HintPath>E:/Repos/Hive/Hive/Assets/Hive/Libraries/Vault/Plugins/MongoDB.Driver.Core.dll</HintPath>
+ <Reference Include="ICSharpCode.NRefactory">
+ <HintPath>E:/Repos/Hive/Hive/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
  </Reference>
  <Reference Include="nunit.framework">
  <HintPath>E:/Repos/Hive/Hive/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
