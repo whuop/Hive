@@ -63,10 +63,12 @@
      <Compile Include="Assets\Hive\Libraries\Services\Scripts\ServiceLocator.cs" />
      <Compile Include="Assets\Hive\Libraries\Vault\Scripts\Collections\Counter.cs" />
      <Compile Include="Assets\Hive\Libraries\Vault\Scripts\Vault.cs" />
+     <Compile Include="Assets\Hive\Scripts\Networking\Client\NetworkClientBehaviour.cs" />
+     <Compile Include="Assets\Hive\Scripts\Networking\Server\NetworkServerBehaviour.cs" />
      <Compile Include="Assets\Hive\Scripts\TransportLayer\Client\NetworkClient.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Client\NetworkClientBehaviour.cs" />
+     <Compile Include="Assets\Hive\Scripts\TransportLayer\Client\Systems\MessageSystems.cs" />
      <Compile Include="Assets\Hive\Scripts\TransportLayer\Server\NetworkServer.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Server\NetworkServerBehaviour.cs" />
+     <Compile Include="Assets\Hive\Scripts\TransportLayer\Server\Systems\MessageSystems.cs" />
      <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Components\SharedComponents.cs" />
      <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\MessageLookupTable.cs" />
      <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Pipelines\IPipelineManager.cs" />

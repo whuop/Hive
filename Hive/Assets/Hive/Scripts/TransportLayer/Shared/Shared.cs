@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using NetMessage;
 using UnityEngine;
 
 namespace Hive.TransportLayer.Shared
@@ -17,6 +18,7 @@ namespace Hive.TransportLayer.Shared
     public class TCPSocket
     {
         public Socket Socket;
+        public ConnectionState State;
     }
 
     public class UDPSocket

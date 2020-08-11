@@ -61,7 +61,6 @@ namespace Hive.TransportLayer.Shared.Pipelines
             var pooledMessage = GetNextPooledMessage();
             stream.ReadMessage(pooledMessage.Message);
             pooledMessage.Sender = sender;
-            Debug.LogError("PUSHED MESSAGE!!! " + pooledMessage.Message);
             m_messageQueue.Enqueue(pooledMessage);
         }
 

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using Hive.TransportLayer.Server;
 using Hive.TransportLayer.Shared;
 using Hive.TransportLayer.Shared.Pipelines;
 using Leopotam.Ecs;
 using NetMessage;
 using UnityEngine;
 
-namespace Hive.TransportLayer.Server
+namespace Hive.Networking.Server
 {
     public class NetworkServerBehaviour : MonoBehaviour
     {

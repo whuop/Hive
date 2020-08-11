@@ -1,8 +1,9 @@
 ﻿using System.Net;
+using Hive.TransportLayer.Client;
 using Hive.TransportLayer.Shared;
 using UnityEngine;
 
-namespace Hive.TransportLayer.Client
+namespace Hive.Networking.Client
 {
     public class NetworkClientBehaviour : MonoBehaviour
     {
@@ -44,23 +45,16 @@ namespace Hive.TransportLayer.Client
         // Update is called once per frame
         void Update()
         {
-            if (m_client.State != NetworkClient.ConnectionState.Connected)
-                return;
-            
             m_client.Update();
         }
 
         private void FixedUpdate()
         {
-            if (m_client.State != NetworkClient.ConnectionState.Connected)
-                return;
             m_client.FixedUpdate();
         }
 
         private void LateUpdate()
         {
-            if (m_client.State != NetworkClient.ConnectionState.Connected)
-                return;
             m_client.LateUpdate();
         }
     }
