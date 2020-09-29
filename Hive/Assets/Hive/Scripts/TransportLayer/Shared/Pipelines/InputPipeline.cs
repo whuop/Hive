@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Components;
 using UnityEngine;
 
 namespace Hive.TransportLayer.Shared.Pipelines
@@ -14,7 +15,7 @@ namespace Hive.TransportLayer.Shared.Pipelines
 
         void Initialize(MessageLookupTable lookupTable, MessageDescriptor descriptor, int typeIndex);
 
-        void PushMessage(CodedInputStream stream, Socket sender);
+        void PushMessage(CodedInputStream stream, HiveConnection sender);
         
         int MessageSize { get; }
     }
@@ -33,7 +34,7 @@ namespace Hive.TransportLayer.Shared.Pipelines
 
         public class MessageObject<T> where T : IMessage
         {
-            public Socket Sender;
+            public HiveConnection Sender;
             public T Message;
         }
         
@@ -56,7 +57,7 @@ namespace Hive.TransportLayer.Shared.Pipelines
             MessageSize = dummyMessage.CalculateSize();
         }
 
-        public void PushMessage(CodedInputStream stream, Socket sender)
+        public void PushMessage(CodedInputStream stream, HiveConnection sender)
         {
             var pooledMessage = GetNextPooledMessage();
             stream.ReadMessage(pooledMessage.Message);

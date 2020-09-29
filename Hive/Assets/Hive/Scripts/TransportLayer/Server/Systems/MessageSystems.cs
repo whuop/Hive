@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Channels;
 using Hive.TransportLayer.Shared.Components;
 using Hive.TransportLayer.Shared.Pipelines;
 using Leopotam.Ecs;
@@ -21,7 +21,11 @@ namespace Hive.TransportLayer.Server.Systems
         private Task<Socket> m_acceptTask;
 
         private MessageLookupTable m_lookupTable;
-        private Dictionary<Socket, PipelineManager> m_managers;
+        
+        private Dictionary<HiveConnection, PipelineManager> m_managers;
+        private Dictionary<HiveConnection, ReliableChannel> m_reliableChannels;
+
+        private uint m_nextSessionID = 0;
         
         public void Init()
         {
@@ -33,7 +37,6 @@ namespace Hive.TransportLayer.Server.Systems
             m_listener.Socket.Bind(localEndPoint);
             m_listener.Socket.Listen(100);
             m_acceptTask = m_listener.Socket.AcceptAsync();
-            Debug.Log($"{m_systemInfo.GetTag()} Booting new accept job!");
         }
 
         public void Run()
@@ -47,9 +50,13 @@ namespace Hive.TransportLayer.Server.Systems
 
                     var entity = m_world.NewEntity();
                     ref HiveConnection connection = ref entity.Get<HiveConnection>();
+                    connection.IsStale = false;
                     connection.Socket = res;
+                    connection.SessionID = m_nextSessionID;
+                    m_nextSessionID++;
                     
-                    m_managers.Add(res, new PipelineManager(m_lookupTable));
+                    m_managers.Add(connection, new PipelineManager(m_lookupTable));
+                    m_reliableChannels.Add(connection, new ReliableChannel(connection.Socket));
                 }
                 m_acceptTask = m_listener.Socket.AcceptAsync();
             }
@@ -57,6 +64,68 @@ namespace Hive.TransportLayer.Server.Systems
 
         public void Destroy()
         {
+        }
+    }
+
+    public class CleanupConnectionsSystem : IEcsInitSystem, IEcsRunSystem, IEcsDestroySystem
+    {
+        private SystemInformation m_systemInfo;
+        private EcsWorld m_world;
+        private EcsFilter<HiveConnection> m_filter;
+        
+        private Dictionary<HiveConnection, PipelineManager> m_managers;
+        private Dictionary<HiveConnection, ReliableChannel> m_reliableChannels;
+        
+        public void Init()
+        {
+            
+        }
+
+        public void Run()
+        {
+            int len = m_filter.GetEntitiesCount();
+            for (int i = 0; i < len; i++)
+            {
+                var entity = m_filter.GetEntity(i);
+                ref HiveConnection connection = ref m_filter.Get1(i);
+                
+                bool isActive = IsActiveConnection(connection);
+                if (!isActive)
+                {
+                    if (!connection.Socket.Connected)
+                        Debug.LogError("Not connected!");
+                    if (connection.IsStale)
+                        Debug.LogError("Connection is stale!!");
+                    Debug.Log($"{m_systemInfo.GetTag()} Cleaned up connection: " + connection.Username);
+                    m_managers.Remove(connection);
+                    m_reliableChannels.Remove(connection);
+                    entity.Destroy();
+                }
+            }
+        }
+
+        private bool IsActiveConnection(HiveConnection connection)
+        {
+            try
+            {
+                if (!connection.Socket.Connected || connection.IsStale)
+                {
+                    //    Connection has been terminated either willingly or forcefully
+                    return false;
+                }
+
+                return true;
+            }
+
+            catch (SocketException)
+            {
+                return false;
+            }
+        }
+
+        public void Destroy()
+        {
+            
         }
     }
     
@@ -87,12 +156,12 @@ namespace Hive.TransportLayer.Server.Systems
             {
                 var entity = m_filter.GetEntity(i);
                 ref HiveConnection connection = ref m_filter.Get1(i);
-                
+
                 //    Check if this entity has a task that has already been completed
                 if (m_entityToTaskMap.ContainsKey(entity))
                 {
                     Task<int> task = m_entityToTaskMap[entity];
-                    if (task.IsCompleted || task.IsCanceled || task.IsFaulted)
+                    if (task.IsCompleted)
                     {
                         m_entityToTaskMap.Remove(entity);
                         m_taskToEntityMap.Remove(task);
@@ -100,6 +169,14 @@ namespace Hive.TransportLayer.Server.Systems
                         //    Read the message itself
                         int messageSize = task.Result;
 
+                        //    Make the connection stale if the message size is 0.
+                        //    this means there is nothing left to receive and the user has disconnected.
+                        if (messageSize == 0)
+                        {
+                            connection.IsStale = true;
+                            continue;
+                        }
+                        
                         StateObject state = m_states[entity];
                         CodedInputStream stream = new CodedInputStream(state.Buffer, 0, messageSize);
 
@@ -109,8 +186,12 @@ namespace Hive.TransportLayer.Server.Systems
                         for (int j = 0; j < numMessages; j++)
                         {
                             IInputPipeline pipeline = m_pipelineManager.GetInputPipeline(messageIndex);
-                            pipeline.PushMessage(stream, state.WorkSocket);
+                            pipeline.PushMessage(stream, connection);
                         }
+                    }
+                    else if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.LogError("Receive message task cancelled for : " + connection.Socket.RemoteEndPoint);
                     }
                 }
                 
@@ -157,9 +238,9 @@ namespace Hive.TransportLayer.Server.Systems
     
     public class MultiSendPipelineMessages : IEcsInitSystem, IEcsRunSystem, IEcsDestroySystem
     {
-        private TCPSocket m_tcpSocket;
-        private Dictionary<Socket, PipelineManager> m_managers;
         private EcsFilter<HiveConnection> m_connections;
+        private Dictionary<HiveConnection, PipelineManager> m_managers;
+        private Dictionary<HiveConnection, ReliableChannel> m_reliableChannels;
         
         public void Init()
         {
@@ -175,46 +256,28 @@ namespace Hive.TransportLayer.Server.Systems
             {
                 var connection = m_connections.Get1(j);
                 PipelineManager manager;
-                bool found = m_managers.TryGetValue(connection.Socket, out manager);
+                ReliableChannel channel;
+                
+                bool found = m_managers.TryGetValue(connection, out manager);
                 if (!found)
                 {
                     Debug.LogError($"Failed to find PipelineManager for connection {connection.Socket.RemoteEndPoint}");
                     continue;
                 }
-                
-                manager.OutputStream.Flush();
-                
-                int count = 0;
-                IReadOnlyList<IOutputPipeline> outputs = manager.GetOutputPipelines();
-                //    Pack output pipelines
-                for (int i = 0; i < outputs.Count; i++)
-                {
-                    var pipeline = outputs[i];
-                    count += pipeline.MessageCount;
-                    if (pipeline.MessageCount == 0)
-                        continue;
-                    //    Pipelines are packed into the message buffer housed in the pipeline manager
-                    pipeline.PackMessages(manager.OutputStream);
-                }
 
-                if (count == 0)
-                    return;
+                found = m_reliableChannels.TryGetValue(connection, out channel);
+                if (!found)
+                {
+                    Debug.LogError($"Failed to find ReliableChannel for connection {connection.Socket.RemoteEndPoint}");
+                    continue;
+                }
                 
-                Send(connection.Socket, manager.MessageBuffer);
+                IReadOnlyList<IOutputPipeline> outputs = manager.GetOutputPipelines();
+                
+                channel.Send(outputs);
                 Debug.Log("Sent Message to: " + connection.Socket.RemoteEndPoint);
             }
         }
-        
-        public void Send(Socket destination, byte[] data)
-        {
-            destination.BeginSend(data, 0, data.Length, SocketFlags.None, (ar) =>
-            {
-                Socket so = (Socket)ar.AsyncState;
-                int bytes = so.EndSend(ar);
-                Debug.Log("Completed Sending MEssage!!");
-            }, destination);
-        }
-
         public void Destroy()
         {
         }

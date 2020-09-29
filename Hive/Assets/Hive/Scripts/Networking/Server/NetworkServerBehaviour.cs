@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using Hive.TransportLayer.Server;
 using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Components;
 using Hive.TransportLayer.Shared.Pipelines;
 using Leopotam.Ecs;
 using NetMessage;
@@ -37,6 +38,11 @@ namespace Hive.Networking.Server
         void Update()
         {
             m_server.Update();
+
+            if (Input.GetKeyUp(KeyCode.O))
+            {
+                m_server.KickUser("whuop");
+            }
         }
 
         private void LateUpdate()
@@ -57,10 +63,14 @@ namespace Hive.Networking.Server
         [SerializeField]
         private NetworkServer m_server;
 
+        private SystemInformation m_info;
+
         private InputPipeline<HandshakeRequest> m_handshakes;
         
         private List<EndPoint> m_acceptedConnections = new List<EndPoint>();
-        private Dictionary<Socket, PipelineManager> m_pipelineManagers;
+        private Dictionary<HiveConnection, PipelineManager> m_pipelineManagers;
+
+        private EcsFilter<HiveConnection> m_filter;
         
         public void Init()
         {
@@ -82,17 +92,27 @@ namespace Hive.Networking.Server
                 var handshake = message.Message;
                 var output = m_pipelineManagers[message.Sender].GetOutputPipeline<HandshakeResponse>();
                 
-                bool authSuccessful = AuthConnection(handshake.Username, handshake.Password, message.Sender);
+                bool authSuccessful = AuthConnection(handshake.Username, handshake.Password, message.Sender.Socket);
 
+                int clientIndex = FindIndexBySocket(message.Sender.Socket);
+                if (clientIndex < 0)
+                {
+                    Debug.LogError($"{m_info.GetTag()} Could not find client with endpoint {message.Sender.Socket.RemoteEndPoint}");
+                }
+                
+                ref var connection = ref m_filter.Get1(clientIndex);
+                
                 if (authSuccessful)
                 {
                     Debug.Log(
-                        $"User trying to log in with Username {handshake.Username} and Password {handshake.Password} from Address {message.Sender.RemoteEndPoint}");
+                        $"User trying to log in with Username {handshake.Username} and Password {handshake.Password} from Address {message.Sender.Socket.RemoteEndPoint}");
 
                     output.PushMessage(new HandshakeResponse
                     {
                         State = ConnectionState.Connected
                     });
+
+                    connection.Username = handshake.Username;
                 }
                 else
                 {
@@ -100,10 +120,28 @@ namespace Hive.Networking.Server
                     {
                         State = ConnectionState.Disconnected
                     });
+                    
+                    connection.Socket.Shutdown(SocketShutdown.Both);
+                    connection.Socket.Close();
+                    connection.IsStale = true;
                 }
                 
                 m_handshakes.Release(message);
             }
+        }
+
+        private int FindIndexBySocket(Socket socket)
+        {
+            for (int i = 0; i < m_filter.GetEntitiesCount(); i++)
+            {
+                var connection = m_filter.Get1(i);
+                if (socket == connection.Socket)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private bool AuthConnection(string username, string password, Socket sender)

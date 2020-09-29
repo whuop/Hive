@@ -65,17 +65,6 @@
      <Compile Include="Assets\Hive\Libraries\Vault\Scripts\Vault.cs" />
      <Compile Include="Assets\Hive\Scripts\Networking\Client\NetworkClientBehaviour.cs" />
      <Compile Include="Assets\Hive\Scripts\Networking\Server\NetworkServerBehaviour.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Client\NetworkClient.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Client\Systems\MessageSystems.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Server\NetworkServer.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Server\Systems\MessageSystems.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Components\SharedComponents.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\MessageLookupTable.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Pipelines\IPipelineManager.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Pipelines\InputPipeline.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Pipelines\OutputPipeline.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Pipelines\PipelineManager.cs" />
-     <Compile Include="Assets\Hive\Scripts\TransportLayer\Shared\Shared.cs" />
      <Compile Include="Assets\NetData\Auth\Handshake.cs" />
      <Compile Include="Assets\VaultData\Entity.cs" />
      <Compile Include="Assets\VaultData\PlayerProfile.cs" />
@@ -802,6 +791,20 @@
  <Reference Include="Boo.Lang">
  <HintPath>E:/UnityEditors/2019.4.2f1/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
  </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Hive.TransportLayer.Shared.csproj">
+      <Project>{1EB54FC8-F853-6F0A-68CD-0B9135FDC4EE}</Project>
+      <Name>Hive.TransportLayer.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="Hive.TransportLayer.Server.csproj">
+      <Project>{22B07851-86C2-5DA1-6358-F28479002E6B}</Project>
+      <Name>Hive.TransportLayer.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="Hive.TransportLayer.Client.csproj">
+      <Project>{CD32A2BF-AB99-5F78-0085-6B3F2F0F9E63}</Project>
+      <Name>Hive.TransportLayer.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,23 +1,22 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using Google.Protobuf;
 using Hive.TransportLayer.Client.Systems;
 using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Channels;
 using Hive.TransportLayer.Shared.Components;
+using Hive.TransportLayer.Shared.ECS;
 using Hive.TransportLayer.Shared.Pipelines;
-using Leopotam.Ecs;
-using NetMessage;
 using UnityEngine;
 
 namespace Hive.TransportLayer.Client
 {
-    
     public class NetworkClient
     {   
         private SystemInformation m_info = new SystemInformation(SystemType.Client);
         private StateObject m_state = new StateObject();
         private MessageLookupTable m_lookupTable;
-        private TCPSocket m_tcpSocket;
+
+        private ReliableChannel m_reliableChannel;
 
         private IPipelineManager m_pipelineManager;
         public IPipelineManager PipelineManager
@@ -25,16 +24,19 @@ namespace Hive.TransportLayer.Client
             get { return m_pipelineManager; }
         }
 
-        private EcsWorld m_world;
-        private EcsSystems m_updateSystems;
-
-        public EcsSystems UpdateSystem => m_updateSystems;
-
+        private EcsManager m_ecsManager;
+        public EcsManager Ecs
+        {
+            get { return m_ecsManager; }
+        }
+        
         private EventBoard m_events;
         public EventBoard Events
         {
             get { return m_events; }
         }
+
+        private string m_tag = "[Client]";
         
         /// <summary>
         /// These might be nice to implement
@@ -43,17 +45,11 @@ namespace Hive.TransportLayer.Client
 
         public delegate void OnRetryingConnectionDelegate();
 
-        public ConnectionState State
-        {
-            get { return m_tcpSocket.State; }
-        }
-
-        private bool m_initedECS = false;
         public NetworkClient(MessageLookupTable lookupTable)
         {
+            m_ecsManager = new EcsManager();
             m_lookupTable = lookupTable;
             m_pipelineManager = new PipelineManager(lookupTable);
-            m_tcpSocket = new TCPSocket();
             m_events = new EventBoard();
             
             m_events.OnConnectCallback += () =>
@@ -66,76 +62,88 @@ namespace Hive.TransportLayer.Client
                 Debug.LogError("ON DISCONNECTED!!");
             };
 
-            m_events.OnAuthenticatedCallback += (ConnectionState state) =>
+            m_events.OnAuthenticatedCallback += () =>
             {
-                Debug.LogError("AUTHENTICATED WITH STATE: " + state.ToString());
+                Debug.LogError("AUTHENTICATED WITH STATE: " /*+ state.ToString()*/);
             };
+            
+            m_reliableChannel = new ReliableChannel();
+            
+            InjectEcsData();
         }
 
-        private void InitEcs()
+        private void InjectEcsData()
         {
+            m_ecsManager.AddSystem<ConnectSystem>();
+            m_ecsManager.AddSystem<ReceiveReliableMessageSystem>();
+            m_ecsManager.AddSystem<SendPipelineMessages>();
             
+            m_ecsManager.AddInject(m_reliableChannel);
+            m_ecsManager.AddInject(m_state);
+            m_ecsManager.AddInject(m_pipelineManager);
+            m_ecsManager.AddInject(m_info);
+            m_ecsManager.AddInject(m_events);
         }
 
         public void Connect(IPEndPoint address, string username, string password)
         {
-            if (State == ConnectionState.Connected)
-                return;
+            m_reliableChannel.GenerateSocket(address.AddressFamily);
             
-            m_tcpSocket.Socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            
-            var connectSystem = new ConnectSystem();
-            var authSystem = new AuthenticationSystem();
-            authSystem.SetCredentials(username, password);
-
-            m_world = new EcsWorld();
-            m_updateSystems = new EcsSystems(m_world);
-            m_updateSystems.Add(connectSystem);
-            m_updateSystems.Add(authSystem);
-            m_updateSystems.Add(new ReceiveReliableMessageSystem());
-            m_updateSystems.Add(new SendPipelineMessages());
-            m_updateSystems.Inject(m_tcpSocket);
-            m_updateSystems.Inject(m_state);
-            m_updateSystems.Inject(m_pipelineManager);
-            m_updateSystems.Inject(m_world);
-            m_updateSystems.Inject(m_info);
-            m_updateSystems.Inject(m_events);
-            
-            m_updateSystems.Init();
-            m_initedECS = true;
+            Ecs.Startup();
+            var connectSystem = Ecs.GetSystem<ConnectSystem>();
             connectSystem.Connect(address, username, password);
         }
 
         public void Disconnect()
         {
+            var args = new SocketAsyncEventArgs()
+            {
+                DisconnectReuseSocket = false,
+                RemoteEndPoint = m_reliableChannel.Socket.RemoteEndPoint,
+                UserToken = m_reliableChannel
+            };
+            args.Completed += (sender, eventArgs) =>
+            {
+                Debug.Log($"{m_tag} Disconnected from the server!");
+                m_events.OnDisconnectCallback?.Invoke();
+                m_reliableChannel.Teardown();
+            };
+
+            m_reliableChannel.Socket.DisconnectAsync(args);
         }
         
-        public void Send(IMessage message)
-        {
-            Send(m_lookupTable.Serialize(message));
-        }
-
         public void Update()
         {
-            if (m_initedECS)
-                m_updateSystems.Run();
-        }
-
-        public void FixedUpdate()
-        {
-        }
-
-        public void LateUpdate()
-        {
-        }
-
-        public void Send(byte[] data)
-        {
-            m_tcpSocket.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, (ar) =>
+            if (m_reliableChannel.Socket == null)
+                return;
+            
+            if (!Ecs.IsInitialized)
+                return;
+            
+            Ecs.Update();
+            if (!IsActiveConnection(m_reliableChannel))
             {
-                StateObject so = (StateObject)ar.AsyncState;
-                int bytes = m_tcpSocket.Socket.EndSend(ar);
-            }, m_state);
+                Disconnect();
+            }
+        }
+
+        private bool IsActiveConnection(Hive.TransportLayer.Shared.Channels.IChannel channel)
+        {
+            try
+            {
+                if (!channel.Socket.Connected || channel.IsStale)
+                {
+                    //    Connection has been terminated either willingly or forcefully
+                    return false;
+                }
+
+                return true;
+            }
+
+            catch (SocketException)
+            {
+                return false;
+            }
         }
 
         public class EventBoard
@@ -146,7 +154,7 @@ namespace Hive.TransportLayer.Client
             public delegate void OnDisconnectDelegate();
             public OnDisconnectDelegate OnDisconnectCallback { get; set; }
         
-            public delegate void OnAuthenticatedDelegate(ConnectionState state);
+            public delegate void OnAuthenticatedDelegate();
 
             public OnAuthenticatedDelegate OnAuthenticatedCallback { get; set; }
         }

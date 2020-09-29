@@ -8,6 +8,16 @@ namespace Hive.TransportLayer.Shared.Components
     public struct HiveConnection
     {
         public Socket Socket;
+        public string Username;
+        public uint SessionID;
+
+        public bool IsStale;
+
+        public override bool Equals(object obj)
+        {
+            Debug.LogError($"Comparing {this.SessionID} || {((HiveConnection)obj).SessionID}");
+            return this.SessionID == ((HiveConnection) obj).SessionID;
+        }
     }
     
     public class SystemInformation

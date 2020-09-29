@@ -1,6 +1,9 @@
 ﻿using System.Net;
 using Hive.TransportLayer.Client;
 using Hive.TransportLayer.Shared;
+using Hive.TransportLayer.Shared.Pipelines;
+using Leopotam.Ecs;
+using NetMessage;
 using UnityEngine;
 
 namespace Hive.Networking.Client
@@ -19,8 +22,9 @@ namespace Hive.Networking.Client
         // Start is called before the first frame update
         void Start()
         {
-            //m_socket = new UdpSocket(m_lookupTable);
             m_client = new NetworkClient(m_lookupTable);
+            
+            m_client.Ecs.AddSystem<AuthenticationSystem>();
         }
 
         private void OnDestroy()
@@ -47,15 +51,53 @@ namespace Hive.Networking.Client
         {
             m_client.Update();
         }
+    }
+    
+    public class AuthenticationSystem : IEcsInitSystem, IEcsRunSystem, IEcsDestroySystem
+    {
+        private IPipelineManager m_pipelines;
 
-        private void FixedUpdate()
+        private OutputPipeline<HandshakeRequest> m_handshakeRequests;
+        private InputPipeline<HandshakeResponse> m_handshakeResponses;
+
+        private NetworkClient.EventBoard m_events;
+        
+        private string m_username = string.Empty;
+        private string m_password = string.Empty;
+        
+        public void Init()
         {
-            m_client.FixedUpdate();
+            m_handshakeRequests = m_pipelines.GetOutputPipeline<HandshakeRequest>();
+            m_handshakeResponses = m_pipelines.GetInputPipeline<HandshakeResponse>();
+            
+            m_handshakeRequests.PushMessage(new HandshakeRequest()
+            {
+                Username = m_username,
+                Password = m_password
+            });
         }
 
-        private void LateUpdate()
+        public void Run()
         {
-            m_client.LateUpdate();
+            while (m_handshakeResponses.Count > 0)
+            {
+                var response = m_handshakeResponses.PopMessageTyped();
+                switch (response.Message.State)
+                {
+                    case ConnectionState.Connected:
+                        Debug.Log("[Client] Successfully authenticated with the server!");
+                        break;
+                    case ConnectionState.Disconnected:
+                        Debug.Log("[Client] !!Failed to authenticate with the server!");
+                        break;
+                }
+                m_events.OnAuthenticatedCallback?.Invoke(/*response.Message.State*/);
+                m_handshakeResponses.Release(response);
+            }
+        }
+
+        public void Destroy()
+        {
         }
     }
 
